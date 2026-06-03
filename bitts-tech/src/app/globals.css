@@ -27,10 +27,6 @@
   --font-display: var(--font-sora);
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background: var(--background);
   color: var(--text-primary);

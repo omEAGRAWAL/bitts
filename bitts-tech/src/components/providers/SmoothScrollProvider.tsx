@@ -10,8 +10,10 @@ interface SmoothScrollProviderProps {
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 0.55,
+      lerp: 0.14,
       smoothWheel: true,
+      wheelMultiplier: 1.15,
     });
 
     let frame = 0;

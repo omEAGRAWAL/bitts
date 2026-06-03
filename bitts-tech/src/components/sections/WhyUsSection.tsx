@@ -3,44 +3,40 @@
 import { motion, useInView, type Variants } from "framer-motion";
 import { useRef } from "react";
 
-import { problems } from "@/lib/data/problems";
+import { whyUsReasons } from "@/lib/data/whyus";
 
 const containerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.12,
+      staggerChildren: 0.08,
     },
   },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: "easeOut" },
+    transition: { duration: 0.45, ease: "easeOut" },
   },
 };
 
-export function ProblemSection() {
+export function WhyUsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-120px" });
 
   return (
-    <section className="bg-surface py-12 md:py-20">
+    <section id="why-us" className="scroll-mt-24 bg-background py-12 md:py-20">
       <div className="mx-auto w-full max-w-container px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <span className="text-sm font-semibold text-accent">
-            Sound familiar?
+            Why Choose Us
           </span>
           <h2 className="mt-4 font-display text-[28px] font-bold leading-tight text-text-primary md:text-[40px]">
-            Is Your Business Still Running on Workarounds?
+            Why Businesses Trust Bitts Tech
           </h2>
-          <p className="mt-5 text-base leading-8 text-text-secondary md:text-lg">
-            Most businesses outgrow their tools long before they realise it. If
-            any of these feel familiar, we should talk.
-          </p>
         </div>
 
         <motion.div
@@ -48,30 +44,29 @@ export function ProblemSection() {
           variants={containerVariants}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
-          className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3"
         >
-          {problems.map((problem) => (
+          {whyUsReasons.map((reason) => (
             <motion.div
-              key={problem.title}
+              key={reason.number}
               variants={cardVariants}
-              className="rounded-xl border border-border bg-background p-6 transition-all duration-200 hover:-translate-y-1 hover:border-accent hover:shadow-card-hover"
+              className="group relative rounded-xl bg-background p-6 transition-all duration-200 hover:-translate-y-1 hover:bg-surface hover:shadow-card"
             >
+              <span className="absolute right-5 top-5 font-display text-3xl font-bold text-blue-100">
+                {reason.number}
+              </span>
               <div className="flex size-12 items-center justify-center rounded-lg bg-blue-50 text-accent">
-                <problem.icon className="size-6" aria-hidden />
+                <reason.icon className="size-6" aria-hidden />
               </div>
               <h3 className="mt-5 text-lg font-bold text-text-primary">
-                {problem.title}
+                {reason.title}
               </h3>
-              <p className="mt-3 leading-7 text-text-secondary">
-                {problem.description}
+              <p className="mt-2 leading-7 text-text-secondary">
+                {reason.description}
               </p>
             </motion.div>
           ))}
         </motion.div>
-
-        <blockquote className="mx-auto mt-12 max-w-2xl border-l-4 border-accent pl-5 text-center text-lg italic text-text-primary md:text-xl">
-          Your technology should work as hard as you do.
-        </blockquote>
       </div>
     </section>
   );
