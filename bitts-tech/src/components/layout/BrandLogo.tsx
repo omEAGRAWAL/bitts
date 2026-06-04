@@ -19,7 +19,7 @@ export function BrandLogo({
     <span className={cn("inline-flex items-center gap-3", className)}>
       <span
         className={cn(
-          "relative size-10 shrink-0 overflow-hidden rounded-lg bg-slate-950",
+          "relative size-10 shrink-0 overflow-hidden rounded-lg border border-border bg-white shadow-sm",
           markClassName,
         )}
       >

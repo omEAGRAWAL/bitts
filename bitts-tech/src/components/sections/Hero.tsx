@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { useCountUp } from "@/hooks/useCountUp";
-import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
+import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 const trustItems = [
