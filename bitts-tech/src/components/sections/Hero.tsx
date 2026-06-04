@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+import { useCountUp } from "@/hooks/useCountUp";
 import { fadeIn, fadeInUp, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,16 @@ const trustItems = [
 const ctaClasses =
   "inline-flex h-12 items-center justify-center rounded-lg px-6 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2";
 
+function TrustItem({ item }: { item: string }) {
+  const supportCount = useCountUp({ end: 24 });
+
+  if (item.includes("24/7")) {
+    return <span>🔒 {supportCount}/7 Live Support</span>;
+  }
+
+  return <span>{item}</span>;
+}
+
 export function Hero() {
   return (
     <section
@@ -27,8 +38,10 @@ export function Hero() {
         className="absolute inset-0 bg-[radial-gradient(circle,#E2E8F0_1px,transparent_1px)] [background-size:24px_24px]"
         aria-hidden
       />
-      <div
+      <motion.div
         className="pointer-events-none absolute right-0 top-0 h-[360px] w-[420px] bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.08),rgba(37,99,235,0)_68%)]"
+        animate={{ x: [0, -18, 0], y: [0, 22, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         aria-hidden
       />
 
@@ -38,12 +51,12 @@ export function Hero() {
         initial="hidden"
         animate="visible"
       >
-        <motion.div
+        {/* <motion.div
           variants={fadeIn}
           className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-accent"
         >
-          🚀 Now accepting new projects for 2025
-        </motion.div>
+          🚀 Now accepting new projects for 2026
+        </motion.div> */}
 
         <motion.h1
           variants={fadeInUp}
@@ -69,7 +82,7 @@ export function Hero() {
             href="/contact"
             className={cn(
               ctaClasses,
-              "bg-accent text-white shadow-sm hover:-translate-y-0.5 hover:bg-accent-hover",
+              "bg-accent text-white shadow-sm hover:-translate-y-0.5 hover:bg-accent-hover active:scale-95",
             )}
           >
             Start a Project →
@@ -78,7 +91,7 @@ export function Hero() {
             href="/#work"
             className={cn(
               ctaClasses,
-              "border border-border bg-background text-text-primary hover:-translate-y-0.5 hover:border-accent hover:text-accent",
+              "border border-border bg-background text-text-primary hover:-translate-y-0.5 hover:border-accent hover:text-accent active:scale-95",
             )}
           >
             See Our Work
@@ -91,7 +104,7 @@ export function Hero() {
         >
           {trustItems.map((item, index) => (
             <div key={item} className="flex items-center justify-center">
-              <span>{item}</span>
+              <TrustItem item={item} />
               {index < trustItems.length - 1 && (
                 <span
                   className="mx-4 hidden size-1 rounded-full bg-text-muted md:inline-block"

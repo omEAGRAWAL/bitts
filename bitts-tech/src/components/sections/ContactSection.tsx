@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { cn } from "@/lib/utils";
+import { fadeInUp } from "@/lib/animations";
 
 const businessTypes = [
   "Travel & Tourism",
@@ -55,7 +56,7 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 const inputClasses =
-  "mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-text-primary outline-none transition-colors placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/15";
+  "mt-2 w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-text-primary outline-none transition-all duration-150 placeholder:text-text-muted focus:border-accent focus:shadow-[0_0_0_4px_rgba(37,99,235,0.08)] focus:ring-2 focus:ring-accent/15";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) {
@@ -82,14 +83,20 @@ export function ContactSection() {
 
   const onSubmit = async (values: ContactFormValues) => {
     // TODO: Connect to Resend email API
-    console.log("Contact request submitted:", values);
+    void values;
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSuccess(true);
   };
 
   return (
     <section id="contact" className="scroll-mt-24 bg-background py-12 md:py-20">
-      <div className="mx-auto w-full max-w-container px-6 lg:px-8">
+      <motion.div
+        className="mx-auto w-full max-w-container px-6 lg:px-8"
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-120px" }}
+      >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-[32px] font-bold leading-tight text-text-primary md:text-[48px]">
             Let&apos;s Build Something Together
@@ -111,21 +118,21 @@ export function ContactSection() {
                 {
                   label: "WhatsApp",
                   value: "Chat with us now",
-                  href: "https://wa.me/+91XXXXXXXXXX",
+                  href: "https://wa.me/917358550765",
                   icon: MessageCircle,
                   accent: "text-success",
                 },
                 {
                   label: "Email",
-                  value: "hello@bitts.tech",
-                  href: "mailto:hello@bitts.tech",
+                  value: "contact@bittstech.com",
+                  href: "mailto:contact@bittstech.com",
                   icon: Mail,
                   accent: "text-accent",
                 },
                 {
                   label: "Call Us",
-                  value: "+91 XXXXX XXXXX",
-                  href: "tel:+91XXXXXXXXXX",
+                  value: "7358550765",
+                  href: "tel:+917358550765",
                   icon: Phone,
                   accent: "text-accent",
                 },
@@ -133,7 +140,7 @@ export function ContactSection() {
                 <a
                   key={method.label}
                   href={method.href}
-                  className="flex items-center gap-4 rounded-xl border border-border bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-card"
+                  className="flex items-center gap-4 rounded-xl border border-border bg-background p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent hover:shadow-card active:scale-95"
                 >
                   <div
                     className={cn(
@@ -190,8 +197,8 @@ export function ContactSection() {
                   Expect a response within 2 hours.
                 </p>
                 <a
-                  href="https://wa.me/+91XXXXXXXXXX"
-                  className="mt-8 inline-flex h-11 items-center justify-center rounded-lg bg-success px-5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5"
+                  href="https://wa.me/917358550765"
+                  className="mt-8 inline-flex h-11 items-center justify-center rounded-lg bg-success px-5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
                 >
                   <MessageCircle className="mr-2 size-4" aria-hidden />
                   Message us on WhatsApp
@@ -244,7 +251,7 @@ export function ContactSection() {
                     {projectNeeds.map((need) => (
                       <label
                         key={need}
-                        className="flex items-center gap-3 rounded-lg border border-border px-3 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-text-primary"
+                        className="flex items-center gap-3 rounded-lg border border-border px-3 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent hover:text-text-primary active:scale-95"
                       >
                         <input
                           type="checkbox"
@@ -290,7 +297,7 @@ export function ContactSection() {
                     {contactMethods.map((method) => (
                       <label
                         key={method}
-                        className="flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold text-text-secondary transition-colors hover:border-accent hover:text-text-primary"
+                        className="flex items-center gap-2 rounded-lg border border-border px-4 py-3 text-sm font-semibold text-text-secondary transition-colors hover:border-accent hover:text-text-primary active:scale-95"
                       >
                         <input
                           type="radio"
@@ -308,7 +315,7 @@ export function ContactSection() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-accent px-6 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-lg bg-accent px-6 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-70"
                 >
                   {isSubmitting ? (
                     <>
@@ -326,7 +333,7 @@ export function ContactSection() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

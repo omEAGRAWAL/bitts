@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Braces,
@@ -52,7 +53,11 @@ function SectionShell({
 
 function DeviceMockup({ label }: { label: string }) {
   return (
-    <div className="rounded-2xl border border-blue-100 bg-slate-950 p-3 shadow-card">
+    <motion.div
+      className="rounded-2xl border border-blue-100 bg-slate-950 p-3 shadow-card"
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    >
       <div className="rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-600 p-4">
         <div className="grid min-h-[300px] grid-cols-[86px_1fr] gap-4 rounded-lg bg-white/12 p-4 backdrop-blur-sm">
           <div className="space-y-3 border-r border-white/20 pr-4">
@@ -92,7 +97,7 @@ function DeviceMockup({ label }: { label: string }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -318,10 +323,10 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
           </p>
           <Link
             href="/contact"
-            className="mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-accent shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-accent"
+            className="group mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-white px-6 text-sm font-semibold text-accent shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-50 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-accent"
           >
             Start a Project
-            <ArrowRight className="ml-2 size-4" aria-hidden />
+            <ArrowRight className="ml-2 size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
           </Link>
         </div>
       </section>

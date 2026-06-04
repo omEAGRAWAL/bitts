@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { MouseEventHandler, useEffect, useState } from "react";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -52,6 +53,7 @@ function TalkLink({
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -80,6 +82,30 @@ export function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    const sectionIds = ["services", "work", "why-us"];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries.find((entry) => entry.isIntersecting);
+
+        if (visibleEntry) {
+          setActiveSection(visibleEntry.target.id);
+        }
+      },
+      { rootMargin: "-35% 0px -55% 0px", threshold: 0 },
+    );
+
+    sectionIds.forEach((id) => {
+      const section = document.getElementById(id);
+
+      if (section) {
+        observer.observe(section);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const closeMenu = () => setIsOpen(false);
 
   return (
@@ -101,25 +127,40 @@ export function Navbar() {
         >
           <Link
             href="/"
-            className="font-display text-lg font-bold text-text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
-            Bitts Tech
+            <BrandLogo priority />
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="group relative text-sm font-medium text-text-secondary transition-colors hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
-              >
-                {link.label}
-                <span
-                  className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-accent transition-transform duration-200 group-hover:scale-x-100"
-                  aria-hidden
-                />
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const sectionId = link.href.startsWith("/#")
+                ? link.href.replace("/#", "")
+                : "";
+              const isActive = Boolean(sectionId && activeSection === sectionId);
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    "group relative text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4",
+                    isActive
+                      ? "text-text-primary"
+                      : "text-text-secondary hover:text-text-primary",
+                  )}
+                >
+                  {link.label}
+                  <span
+                    className={cn(
+                      "absolute -bottom-1 left-0 h-px w-full origin-left bg-accent transition-transform duration-200 group-hover:scale-x-100",
+                      isActive ? "scale-x-100" : "scale-x-0",
+                    )}
+                    aria-hidden
+                  />
+                </Link>
+              );
+            })}
           </div>
 
           <div className="hidden items-center gap-3 md:flex">
@@ -129,7 +170,7 @@ export function Navbar() {
 
           <button
             type="button"
-            className="inline-flex size-10 items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+            className="inline-flex size-10 items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
             aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
@@ -156,14 +197,14 @@ export function Navbar() {
             <div className="flex items-center justify-between">
               <Link
                 href="/"
-                className="font-display text-lg font-bold text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                 onClick={closeMenu}
               >
-                Bitts Tech
+                <BrandLogo priority />
               </Link>
               <button
                 type="button"
-                className="inline-flex size-10 items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                className="inline-flex size-10 items-center justify-center rounded-lg text-text-primary transition-colors hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                 aria-label="Close navigation menu"
                 onClick={closeMenu}
               >

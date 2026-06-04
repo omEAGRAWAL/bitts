@@ -6,29 +6,11 @@ import { useState } from "react";
 
 import { faqs } from "@/lib/data/faq";
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
-    },
-  })),
-};
-
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
     <section className="bg-surface py-12 md:py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
       <div className="mx-auto w-full max-w-container px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <span className="text-sm font-semibold text-accent">FAQs</span>

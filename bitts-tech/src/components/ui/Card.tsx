@@ -1,12 +1,15 @@
-import { HTMLAttributes } from "react";
+"use client";
+
+import { motion, type HTMLMotionProps } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function Card({ className, ...props }: HTMLMotionProps<"div">) {
   return (
-    <div
+    <motion.div
+      whileHover={{ y: -4, boxShadow: "0 18px 40px rgba(15, 23, 42, 0.1)" }}
       className={cn(
-        "rounded-xl border border-border bg-background p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-card-hover",
+        "rounded-xl border border-border bg-background p-6 shadow-card transition-all duration-200",
         className,
       )}
       {...props}

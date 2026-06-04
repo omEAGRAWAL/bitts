@@ -1,6 +1,8 @@
 import { AtSign, Camera, MessageCircle, Send } from "lucide-react";
 import Link from "next/link";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
+
 const services = [
   "Custom Websites",
   "Web Applications",
@@ -28,8 +30,11 @@ export function Footer() {
         <div className="mx-auto max-w-container">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <Link href="/" className="font-display text-xl font-bold">
-                Bitts Tech
+              <Link href="/" className="active:scale-95">
+                <BrandLogo
+                  markClassName="size-12"
+                  textClassName="text-xl text-white"
+                />
               </Link>
               <p className="mt-3 text-slate-300">Your Vision. Our Code.</p>
               <div className="mt-5 flex gap-3">
@@ -42,7 +47,7 @@ export function Footer() {
                     key={social.label}
                     href={social.href}
                     aria-label={social.label}
-                    className="flex size-10 items-center justify-center rounded-lg bg-white/10 text-slate-200 transition-colors hover:bg-white/15 hover:text-white"
+                    className="flex size-10 items-center justify-center rounded-lg bg-white/10 text-slate-200 transition-colors hover:bg-white/15 hover:text-white active:scale-95"
                   >
                     <social.icon className="size-5" aria-hidden />
                   </a>
@@ -69,7 +74,7 @@ export function Footer() {
               <ul className="mt-4 grid gap-3">
                 {workLinks.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-slate-400 transition-colors hover:text-white">
+                    <Link href={link.href} className="text-slate-400 transition-colors hover:text-white active:scale-95">
                       {link.label}
                     </Link>
                   </li>
@@ -84,7 +89,7 @@ export function Footer() {
               <ul className="mt-4 grid gap-3">
                 {companyLinks.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-slate-400 transition-colors hover:text-white">
+                    <Link href={link.href} className="text-slate-400 transition-colors hover:text-white active:scale-95">
                       {link.label}
                     </Link>
                   </li>
@@ -94,16 +99,16 @@ export function Footer() {
           </div>
 
           <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
-            <p>© 2025 Bitts Tech. All rights reserved.</p>
+            <p>© 2026 Bitts Tech. All rights reserved.</p>
             <p className="font-semibold text-slate-200">🟢 24/7 Live Support — Always On</p>
           </div>
         </div>
       </footer>
 
       <a
-        href="https://wa.me/+91XXXXXXXXXX"
+        href="https://wa.me/917358550765"
         aria-label="Chat with us on WhatsApp"
-        className="group fixed bottom-5 right-5 z-50 flex h-14 items-center justify-center rounded-full bg-success px-4 text-white shadow-card-hover transition-all duration-200 hover:gap-2 hover:px-5"
+        className="group fixed bottom-5 right-5 z-50 flex h-14 items-center justify-center rounded-full bg-success px-4 text-white shadow-card-hover transition-all duration-200 hover:gap-2 hover:px-5 active:scale-95"
       >
         <span className="absolute right-1 top-1 size-3 rounded-full bg-red-500 ring-2 ring-white" aria-hidden />
         <MessageCircle className="size-6" aria-hidden />

@@ -1,3 +1,8 @@
+"use client";
+
+import { motion } from "framer-motion";
+
+import { fadeInUp } from "@/lib/animations";
 import { cn } from "@/lib/utils";
 
 const industries = [
@@ -15,7 +20,13 @@ const industries = [
 export function IndustriesSection() {
   return (
     <section className="bg-background py-12 md:py-20">
-      <div className="mx-auto w-full max-w-container px-6 lg:px-8">
+      <motion.div
+        className="mx-auto w-full max-w-container px-6 lg:px-8"
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-120px" }}
+      >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-[28px] font-bold leading-tight text-text-primary md:text-[40px]">
             We Build for Any Business
@@ -45,7 +56,7 @@ export function IndustriesSection() {
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

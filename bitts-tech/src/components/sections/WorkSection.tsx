@@ -9,7 +9,11 @@ import { cn } from "@/lib/utils";
 
 function DashboardMockup() {
   return (
-    <div className="rounded-xl border border-blue-200 bg-slate-950 p-3 shadow-card">
+    <motion.div
+      className="rounded-xl border border-blue-200 bg-slate-950 p-3 shadow-card"
+      animate={{ y: [0, -8, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    >
       <div className="rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 p-4">
         <div className="grid min-h-[220px] grid-cols-[72px_1fr] gap-4 rounded-md bg-white/12 p-4 backdrop-blur-sm">
           <div className="space-y-3 border-r border-white/20 pr-4">
@@ -44,7 +48,7 @@ function DashboardMockup() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -127,10 +131,10 @@ function ProjectStory({
 
       <Link
         href={project.href}
-        className="mt-7 inline-flex w-fit items-center gap-2 text-sm font-semibold text-accent transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
+        className="group mt-7 inline-flex w-fit items-center gap-2 text-sm font-semibold text-accent transition-colors hover:text-accent-hover active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
       >
         View Full Case Study
-        <ArrowRight className="size-4" aria-hidden />
+        <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
       </Link>
     </div>
   );
@@ -188,10 +192,10 @@ export function WorkSection() {
             </p>
             <Link
               href="/contact"
-              className="mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-accent px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              className="group mt-6 inline-flex h-11 items-center justify-center rounded-lg bg-accent px-5 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             >
               Start a Conversation
-              <ArrowRight className="ml-2 size-4" aria-hidden />
+              <ArrowRight className="ml-2 size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
             </Link>
           </div>
         </div>
