@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Sora } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
@@ -72,6 +73,7 @@ export default function RootLayout({
             <Footer />
           </PageLoadProvider>
         </SmoothScrollProvider>
+        <Analytics />
       </body>
     </html>
   );
