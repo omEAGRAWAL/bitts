@@ -3,16 +3,9 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
-  Braces,
   Check,
-  Code2,
-  Database,
-  Globe,
   Home,
-  MessageCircle,
-  Server,
   X,
-  type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,16 +21,7 @@ interface CaseStudyLayoutProps {
   tabs?: WorkProjectTab[];
 }
 
-// ── Tech icons map ────────────────────────────────────────────────────────────
-const techIcons: Record<string, LucideIcon> = {
-  "Cloud Hosting": Server,
-  "Cloud Storage": Server,
-  "Next.js": Code2,
-  PostgreSQL: Database,
-  "REST APIs": Globe,
-  TypeScript: Braces,
-  "WhatsApp API": MessageCircle,
-};
+
 
 // ── Shared section shell ──────────────────────────────────────────────────────
 function SectionShell({
@@ -239,44 +223,6 @@ function FeatureTabs({
   );
 }
 
-// ── Full gallery strip at the bottom of the case study ────────────────────────
-function ImageGallery({ tabs, title }: { tabs: WorkProjectTab[]; title: string }) {
-  if (!tabs || tabs.length === 0) return null;
-  return (
-    <SectionShell className="bg-surface">
-      <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
-        Screenshots
-      </h2>
-      <p className="mt-3 text-text-secondary">A closer look at the platform.</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tabs.map((tab, i) => (
-          <motion.div
-            key={tab.label}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.45, delay: i * 0.08, ease: "easeOut" }}
-            className="overflow-hidden rounded-xl border border-border bg-slate-950 shadow-card"
-          >
-            <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900 px-3 py-2">
-              <span className="size-1.5 rounded-full bg-accent" />
-              <span className="text-xs font-semibold text-slate-300">{tab.label}</span>
-            </div>
-            <div className="relative aspect-[4/3]">
-              <Image
-                src={tab.image}
-                alt={`${title} — ${tab.label}`}
-                fill
-                className="object-cover object-top"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </SectionShell>
-  );
-}
 
 // ── Main CaseStudyLayout ──────────────────────────────────────────────────────
 export function CaseStudyLayout({ caseStudy, tabs }: CaseStudyLayoutProps) {
@@ -365,29 +311,6 @@ export function CaseStudyLayout({ caseStudy, tabs }: CaseStudyLayoutProps) {
         <FeatureTabs caseStudy={caseStudy} tabs={tabs} />
       </SectionShell>
 
-      {/* Full screenshot gallery (replaces video section) */}
-      {tabs && tabs.length > 0 && <ImageGallery tabs={tabs} title={caseStudy.title} />}
-
-      {/* Tech Stack */}
-      <SectionShell className={tabs && tabs.length > 0 ? "" : "bg-surface"}>
-        <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
-          Built With
-        </h2>
-        <div className="mt-6 flex flex-wrap gap-3">
-          {caseStudy.techStack.map((tech) => {
-            const TechIcon = techIcons[tech.name] ?? Code2;
-            return (
-              <span
-                key={tech.name}
-                className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold text-text-secondary"
-              >
-                <TechIcon className="size-4 text-accent" aria-hidden />
-                {tech.name}
-              </span>
-            );
-          })}
-        </div>
-      </SectionShell>
 
       {/* Outcomes */}
       <SectionShell className="bg-surface">

@@ -199,11 +199,6 @@ export const caseStudies = {
         description:
           "Record workforce attendance, connect labor activity to projects, and simplify payroll preparation.",
       },
-      {
-        name: "Vendor Management",
-        description:
-          "Organize vendors, procurement history, documents, payments, and performance notes in one reliable source of truth.",
-      },
     ],
     techStack: [
       { name: "Next.js" },
