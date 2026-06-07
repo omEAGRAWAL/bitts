@@ -1,3 +1,10 @@
+export interface WorkProjectTab {
+  /** Short label shown in the tab button */
+  label: string;
+  /** Path relative to /public, e.g. "/work/travel-1.webp" */
+  image: string;
+}
+
 export interface WorkProject {
   industry: string;
   title: string;
@@ -5,6 +12,8 @@ export interface WorkProject {
   features: string[];
   stack: string[];
   href: string;
+  /** Named tabs — each tab has a label and a matching screenshot */
+  tabs?: WorkProjectTab[];
 }
 
 export interface CaseStudyFeature {
@@ -61,6 +70,11 @@ export const workProjects: WorkProject[] = [
     features: travelFeatures,
     stack: ["Next.js", "TypeScript", "PostgreSQL", "WhatsApp API"],
     href: "/work/travel-suite",
+    tabs: [
+      { label: "Dashboard",       image: "/work/travel-1.webp" },
+      { label: "Lead Pipeline",   image: "/work/travel-2.webp" },
+      { label: "Booking & Invoice", image: "/work/travel-3.webp" },
+    ],
   },
   {
     industry: "Construction & Infrastructure",
@@ -70,8 +84,16 @@ export const workProjects: WorkProject[] = [
     features: constructionFeatures,
     stack: ["Next.js", "Node.js", "PostgreSQL", "Cloud Storage"],
     href: "/work/construction-suite",
+    tabs: [
+      { label: "Site Overview",  image: "/work/construction-1.webp" },
+      { label: "Procurement",    image: "/work/construction-2.webp" },
+      { label: "Payroll",        image: "/work/construction-3.webp" },
+      { label: "Reports",        image: "/work/construction-4.webp" },
+    ],
   },
 ];
+
+
 
 export const caseStudies = {
   travelSuite: {

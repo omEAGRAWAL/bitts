@@ -1,12 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Check, Play, Plus } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Check, Plus } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { workProjects } from "@/lib/data/work";
+import { workProjects, type WorkProjectTab } from "@/lib/data/work";
 import { cn } from "@/lib/utils";
 
+// ── Constants ─────────────────────────────────────────────────────────────────
+const TAB_INTERVAL = 3800; // ms between auto-advance
+
+// ── Dashboard Mockup — fallback when no tabs/images are provided ──────────────
 function DashboardMockup() {
   return (
     <motion.div
@@ -15,7 +21,7 @@ function DashboardMockup() {
       transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
     >
       <div className="rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 p-4">
-        <div className="grid min-h-[220px] grid-cols-[72px_1fr] gap-4 rounded-md bg-white/12 p-4 backdrop-blur-sm">
+        <div className="grid min-h-[260px] grid-cols-[72px_1fr] gap-4 rounded-md bg-white/12 p-4 backdrop-blur-sm">
           <div className="space-y-3 border-r border-white/20 pr-4">
             <div className="h-6 rounded bg-white/80" />
             <div className="h-3 rounded bg-white/50" />
@@ -32,12 +38,8 @@ function DashboardMockup() {
             <div className="rounded-lg bg-white/80 p-4">
               <div className="mb-4 h-3 w-32 rounded bg-blue-200" />
               <div className="flex h-24 items-end gap-2">
-                {[44, 68, 52, 88, 74, 96, 62].map((height) => (
-                  <div
-                    key={height}
-                    className="flex-1 rounded-t bg-accent/80"
-                    style={{ height }}
-                  />
+                {[44, 68, 52, 88, 74, 96, 62].map((h) => (
+                  <div key={h} className="flex-1 rounded-t bg-accent/80" style={{ height: h }} />
                 ))}
               </div>
             </div>
@@ -52,35 +54,133 @@ function DashboardMockup() {
   );
 }
 
-function VideoPlaceholder() {
-  return (
-    <div className="mt-5">
-      <div className="flex aspect-video items-center justify-center rounded-xl bg-slate-950">
-        <div className="flex size-14 items-center justify-center rounded-full bg-white text-accent shadow-card">
-          <Play className="ml-1 size-6 fill-current" aria-hidden />
-        </div>
-      </div>
-      <p className="mt-3 text-center text-sm font-semibold text-accent">
-        ▶ Watch the Demo
-      </p>
-    </div>
-  );
-}
-
-function ProjectVisual() {
-  return (
-    <div>
-      <DashboardMockup />
-      <VideoPlaceholder />
-    </div>
-  );
-}
-
-function ProjectStory({
-  project,
+// ── Tabbed Image Viewer ───────────────────────────────────────────────────────
+function TabbedImageViewer({
+  tabs,
+  title,
 }: {
-  project: (typeof workProjects)[number];
+  tabs: WorkProjectTab[];
+  title: string;
 }) {
+  const [active, setActive] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(
+      () => setActive((c) => (c + 1) % tabs.length),
+      TAB_INTERVAL,
+    );
+  }, [tabs.length]);
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [startTimer]);
+
+  const handleTab = (i: number) => {
+    setActive(i);
+    startTimer(); // reset timer on manual click
+  };
+
+  return (
+    <div className="flex flex-col gap-0 overflow-hidden rounded-xl border border-border bg-slate-950 shadow-card">
+      {/* ── Tab bar ── */}
+      <div
+        role="tablist"
+        aria-label={`${title} screenshots`}
+        className="flex overflow-x-auto border-b border-white/10 bg-slate-900 scrollbar-none"
+      >
+        {tabs.map((tab, i) => {
+          const isActive = i === active;
+          return (
+            <button
+              key={tab.label}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`panel-${i}`}
+              id={`tab-${i}`}
+              onClick={() => handleTab(i)}
+              className={cn(
+                "relative shrink-0 whitespace-nowrap px-4 py-3 text-xs font-semibold tracking-wide transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
+                isActive
+                  ? "text-white"
+                  : "text-slate-400 hover:text-slate-200",
+              )}
+            >
+              {tab.label}
+              {/* active underline */}
+              {isActive && (
+                <motion.span
+                  layoutId="tab-underline"
+                  className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-accent"
+                  transition={{ type: "spring", stiffness: 420, damping: 36 }}
+                />
+              )}
+              {/* auto-progress bar */}
+              {isActive && (
+                <motion.span
+                  key={active}
+                  className="absolute bottom-0 left-0 h-[2px] rounded-full bg-blue-300/40"
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: TAB_INTERVAL / 1000, ease: "linear" }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Image panel ── */}
+      <div
+        role="tabpanel"
+        id={`panel-${active}`}
+        aria-labelledby={`tab-${active}`}
+        className="relative aspect-[16/10] w-full bg-slate-950"
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.32, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={tabs[active].image}
+              alt={`${title} — ${tabs[active].label}`}
+              fill
+              className="object-cover object-top"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority={active === 0}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+// ── Project Visual — tabs if available, mockup otherwise ─────────────────────
+function ProjectVisual({
+  tabs,
+  title,
+}: {
+  tabs?: WorkProjectTab[];
+  title: string;
+}) {
+  if (tabs && tabs.length > 0) {
+    return <TabbedImageViewer tabs={tabs} title={title} />;
+  }
+  return <DashboardMockup />;
+}
+
+// ── Project Story ─────────────────────────────────────────────────────────────
+function ProjectStory({ project }: { project: (typeof workProjects)[number] }) {
   return (
     <div className="flex flex-col justify-center">
       <span className="w-fit rounded-full border border-border bg-surface px-3 py-1 text-xs font-semibold text-text-secondary">
@@ -94,9 +194,7 @@ function ProjectStory({
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-text-muted">
           The Challenge
         </p>
-        <p className="mt-2 leading-7 text-text-secondary">
-          {project.challenge}
-        </p>
+        <p className="mt-2 leading-7 text-text-secondary">{project.challenge}</p>
       </div>
 
       <div className="mt-6">
@@ -105,10 +203,7 @@ function ProjectStory({
         </p>
         <ul className="mt-3 grid gap-3">
           {project.features.map((feature) => (
-            <li
-              key={feature}
-              className="flex gap-3 text-sm leading-6 text-text-secondary"
-            >
+            <li key={feature} className="flex gap-3 text-sm leading-6 text-text-secondary">
               <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-accent">
                 <Check className="size-3.5" aria-hidden />
               </span>
@@ -140,6 +235,7 @@ function ProjectStory({
   );
 }
 
+// ── Main WorkSection ──────────────────────────────────────────────────────────
 export function WorkSection() {
   return (
     <section id="work" className="scroll-mt-24 bg-surface py-12 md:py-20">
@@ -166,13 +262,13 @@ export function WorkSection() {
                 key={project.title}
                 initial={{ opacity: 0, x: isReversed ? 48 : -48 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
+                viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.65, ease: "easeOut" }}
                 className="overflow-hidden rounded-2xl border border-border bg-background p-5 shadow-card md:p-8"
               >
-                <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+                <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
                   <div className={cn(isReversed && "lg:order-2")}>
-                    <ProjectVisual />
+                    <ProjectVisual tabs={project.tabs} title={project.title} />
                   </div>
                   <ProjectStory project={project} />
                 </div>
@@ -180,6 +276,7 @@ export function WorkSection() {
             );
           })}
 
+          {/* CTA card */}
           <div className="rounded-2xl border border-dashed border-blue-200 bg-background/70 p-10 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-blue-50 text-accent">
               <Plus className="size-7" aria-hidden />

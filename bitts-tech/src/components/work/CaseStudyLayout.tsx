@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Braces,
@@ -10,21 +10,25 @@ import {
   Globe,
   Home,
   MessageCircle,
-  Play,
   Server,
   X,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { CaseStudy } from "@/lib/data/work";
+import type { CaseStudy, WorkProjectTab } from "@/lib/data/work";
 import { cn } from "@/lib/utils";
 
+// ── Types ─────────────────────────────────────────────────────────────────────
 interface CaseStudyLayoutProps {
   caseStudy: CaseStudy;
+  /** Tabs from workProjects — if provided, real screenshots are shown */
+  tabs?: WorkProjectTab[];
 }
 
+// ── Tech icons map ────────────────────────────────────────────────────────────
 const techIcons: Record<string, LucideIcon> = {
   "Cloud Hosting": Server,
   "Cloud Storage": Server,
@@ -35,6 +39,7 @@ const techIcons: Record<string, LucideIcon> = {
   "WhatsApp API": MessageCircle,
 };
 
+// ── Shared section shell ──────────────────────────────────────────────────────
 function SectionShell({
   children,
   className,
@@ -51,7 +56,8 @@ function SectionShell({
   );
 }
 
-function DeviceMockup({ label }: { label: string }) {
+// ── Fallback animated mockup (when no real image is available) ────────────────
+function DeviceMockup() {
   return (
     <motion.div
       className="rounded-2xl border border-blue-100 bg-slate-950 p-3 shadow-card"
@@ -69,10 +75,6 @@ function DeviceMockup({ label }: { label: string }) {
             <div className="h-3 rounded bg-white/25" />
           </div>
           <div className="space-y-4">
-            <div>
-              <div className="h-4 w-44 rounded bg-white/80" />
-              <div className="mt-2 h-3 w-64 max-w-full rounded bg-white/45" />
-            </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="h-20 rounded-xl bg-white/75" />
               <div className="h-20 rounded-xl bg-white/55" />
@@ -84,16 +86,11 @@ function DeviceMockup({ label }: { label: string }) {
                 <div className="h-3 w-16 rounded bg-blue-100" />
               </div>
               <div className="flex h-28 items-end gap-2">
-                {[54, 78, 48, 96, 72, 106, 62].map((height) => (
-                  <div
-                    key={height}
-                    className="flex-1 rounded-t bg-accent/80"
-                    style={{ height }}
-                  />
+                {[54, 78, 48, 96, 72, 106, 62].map((h) => (
+                  <div key={h} className="flex-1 rounded-t bg-accent/80" style={{ height: h }} />
                 ))}
               </div>
             </div>
-            <div className="text-sm font-semibold text-white/90">{label}</div>
           </div>
         </div>
       </div>
@@ -101,15 +98,9 @@ function DeviceMockup({ label }: { label: string }) {
   );
 }
 
-function StateList({
-  items,
-  tone,
-}: {
-  items: string[];
-  tone: "before" | "after";
-}) {
+// ── Before / After state list ─────────────────────────────────────────────────
+function StateList({ items, tone }: { items: string[]; tone: "before" | "after" }) {
   const isAfter = tone === "after";
-
   return (
     <div className="rounded-2xl border border-border bg-background p-6 shadow-card">
       <ul className="grid gap-4">
@@ -121,11 +112,7 @@ function StateList({
                 isAfter ? "bg-emerald-50 text-success" : "bg-red-50 text-red-500",
               )}
             >
-              {isAfter ? (
-                <Check className="size-4" aria-hidden />
-              ) : (
-                <X className="size-4" aria-hidden />
-              )}
+              {isAfter ? <Check className="size-4" aria-hidden /> : <X className="size-4" aria-hidden />}
             </span>
             <span>{item}</span>
           </li>
@@ -135,40 +122,167 @@ function StateList({
   );
 }
 
-function FeatureTabs({ caseStudy }: { caseStudy: CaseStudy }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeFeature = caseStudy.features[activeIndex];
+// ── Feature tabs with real screenshots ───────────────────────────────────────
+const TAB_INTERVAL = 4000;
+
+function FeatureTabs({
+  caseStudy,
+  tabs,
+}: {
+  caseStudy: CaseStudy;
+  tabs?: WorkProjectTab[];
+}) {
+  const [active, setActive] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const count = caseStudy.features.length;
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(
+      () => setActive((c) => (c + 1) % count),
+      TAB_INTERVAL,
+    );
+  }, [count]);
+
+  useEffect(() => {
+    startTimer();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [startTimer]);
+
+  const handleTab = (i: number) => { setActive(i); startTimer(); };
+
+  // Determine which image to show — match tab by index, fallback to null
+  const activeImage = tabs?.[active]?.image ?? null;
+  const activeFeature = caseStudy.features[active];
 
   return (
-    <div className="mt-10 grid gap-6 lg:grid-cols-[320px_1fr]">
-      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:overflow-visible lg:pb-0">
-        {caseStudy.features.map((feature, index) => (
+    <div className="mt-10 grid gap-6 lg:grid-cols-[280px_1fr]">
+      {/* ── Sidebar tab buttons ── */}
+      <div className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:content-start lg:overflow-visible lg:pb-0">
+        {caseStudy.features.map((feature, i) => (
           <button
             key={feature.name}
             type="button"
-            onClick={() => setActiveIndex(index)}
+            onClick={() => handleTab(i)}
             className={cn(
-              "min-w-fit rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 lg:w-full",
-              activeIndex === index
-                ? "border-accent bg-blue-50 text-accent"
+              "relative min-w-fit rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 lg:w-full",
+              active === i
+                ? "border-accent bg-blue-50 text-accent shadow-sm"
                 : "border-border bg-background text-text-secondary hover:border-accent hover:text-text-primary",
             )}
           >
             {feature.name}
+            {/* auto-progress bar on active tab */}
+            {active === i && (
+              <motion.span
+                key={`progress-${i}`}
+                className="absolute bottom-0 left-0 h-[2px] rounded-full bg-accent/40"
+                initial={{ width: "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: TAB_INTERVAL / 1000, ease: "linear" }}
+              />
+            )}
           </button>
         ))}
       </div>
 
-      <div>
-        <DeviceMockup label={activeFeature.description} />
+      {/* ── Image / Mockup panel ── */}
+      <div className="overflow-hidden rounded-2xl border border-border bg-slate-950 shadow-card">
+        {activeImage ? (
+          <>
+            {/* Tab label bar */}
+            <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900 px-4 py-2.5">
+              <span className="size-2 rounded-full bg-accent" />
+              <span className="text-xs font-semibold text-slate-300">
+                {tabs![active].label}
+              </span>
+            </div>
+            {/* Animated image */}
+            <div className="relative aspect-[16/10] w-full">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={active}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={activeImage}
+                    alt={`${activeFeature.name} screenshot`}
+                    fill
+                    className="object-cover object-top"
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    priority={active === 0}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            {/* Feature description below image */}
+            <div className="border-t border-white/10 px-5 py-4">
+              <p className="text-sm leading-6 text-slate-300">
+                {activeFeature.description}
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="p-4">
+            <DeviceMockup />
+            <p className="mt-4 px-1 text-sm leading-6 text-slate-400">
+              {activeFeature.description}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
+// ── Full gallery strip at the bottom of the case study ────────────────────────
+function ImageGallery({ tabs, title }: { tabs: WorkProjectTab[]; title: string }) {
+  if (!tabs || tabs.length === 0) return null;
+  return (
+    <SectionShell className="bg-surface">
+      <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
+        Screenshots
+      </h2>
+      <p className="mt-3 text-text-secondary">A closer look at the platform.</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tabs.map((tab, i) => (
+          <motion.div
+            key={tab.label}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.45, delay: i * 0.08, ease: "easeOut" }}
+            className="overflow-hidden rounded-xl border border-border bg-slate-950 shadow-card"
+          >
+            <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900 px-3 py-2">
+              <span className="size-1.5 rounded-full bg-accent" />
+              <span className="text-xs font-semibold text-slate-300">{tab.label}</span>
+            </div>
+            <div className="relative aspect-[4/3]">
+              <Image
+                src={tab.image}
+                alt={`${title} — ${tab.label}`}
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </SectionShell>
+  );
+}
+
+// ── Main CaseStudyLayout ──────────────────────────────────────────────────────
+export function CaseStudyLayout({ caseStudy, tabs }: CaseStudyLayoutProps) {
   return (
     <main>
+      {/* Hero */}
       <SectionShell className="bg-surface pt-16">
         <nav
           className="mb-8 flex flex-wrap items-center gap-2 text-sm text-text-muted"
@@ -179,9 +293,7 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
             Home
           </Link>
           <span aria-hidden>/</span>
-          <Link href="/#work" className="hover:text-accent">
-            Our Work
-          </Link>
+          <Link href="/#work" className="hover:text-accent">Our Work</Link>
           <span aria-hidden>/</span>
           <span className="text-text-secondary">{caseStudy.title}</span>
         </nav>
@@ -207,6 +319,7 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
         </div>
       </SectionShell>
 
+      {/* Problem */}
       <SectionShell>
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div>
@@ -214,8 +327,8 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
               The Problem We Solved
             </h2>
             <div className="mt-5 grid gap-4 text-base leading-8 text-text-secondary">
-              {caseStudy.challengeIntro.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
+              {caseStudy.challengeIntro.map((para) => (
+                <p key={para}>{para}</p>
               ))}
             </div>
           </div>
@@ -223,6 +336,7 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
         </div>
       </SectionShell>
 
+      {/* Solution */}
       <SectionShell className="bg-surface">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <StateList items={caseStudy.afterState} tone="after" />
@@ -237,6 +351,7 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
         </div>
       </SectionShell>
 
+      {/* Key Features — with real screenshots */}
       <SectionShell>
         <div className="max-w-3xl">
           <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
@@ -247,38 +362,20 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
             connected business platform.
           </p>
         </div>
-        <FeatureTabs caseStudy={caseStudy} />
+        <FeatureTabs caseStudy={caseStudy} tabs={tabs} />
       </SectionShell>
 
-      <SectionShell className="bg-surface">
-        <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
-          See It In Action
-        </h2>
-        <div className="mt-8 overflow-hidden rounded-2xl bg-slate-950 shadow-[0_24px_80px_rgba(37,99,235,0.2)]">
-          <div className="aspect-video">
-            <iframe
-              className="h-full w-full"
-              src="about:blank"
-              title={`${caseStudy.title} demo video placeholder`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="flex items-center justify-center gap-3 border-t border-white/10 p-5 text-white">
-            <Play className="size-5" aria-hidden />
-            Demo video placeholder
-          </div>
-        </div>
-      </SectionShell>
+      {/* Full screenshot gallery (replaces video section) */}
+      {tabs && tabs.length > 0 && <ImageGallery tabs={tabs} title={caseStudy.title} />}
 
-      <SectionShell>
+      {/* Tech Stack */}
+      <SectionShell className={tabs && tabs.length > 0 ? "" : "bg-surface"}>
         <h2 className="font-display text-3xl font-bold text-text-primary md:text-[40px]">
           Built With
         </h2>
         <div className="mt-6 flex flex-wrap gap-3">
           {caseStudy.techStack.map((tech) => {
             const TechIcon = techIcons[tech.name] ?? Code2;
-
             return (
               <span
                 key={tech.name}
@@ -292,6 +389,7 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
         </div>
       </SectionShell>
 
+      {/* Outcomes */}
       <SectionShell className="bg-surface">
         <h2 className="text-center font-display text-3xl font-bold text-text-primary md:text-[40px]">
           The Result
@@ -302,17 +400,14 @@ export function CaseStudyLayout({ caseStudy }: CaseStudyLayoutProps) {
               key={outcome.value}
               className="rounded-2xl border border-border bg-background p-6 text-center shadow-card"
             >
-              <p className="font-display text-3xl font-bold text-accent">
-                {outcome.value}
-              </p>
-              <p className="mt-3 text-sm leading-6 text-text-secondary">
-                {outcome.label}
-              </p>
+              <p className="font-display text-3xl font-bold text-accent">{outcome.value}</p>
+              <p className="mt-3 text-sm leading-6 text-text-secondary">{outcome.label}</p>
             </div>
           ))}
         </div>
       </SectionShell>
 
+      {/* CTA */}
       <section className="bg-accent px-6 py-16 text-center text-white">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-display text-3xl font-bold md:text-[40px]">

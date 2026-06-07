@@ -19,16 +19,16 @@ export function BrandLogo({
     <span className={cn("inline-flex items-center gap-3", className)}>
       <span
         className={cn(
-          "relative size-10 shrink-0 overflow-hidden rounded-lg border border-border bg-white shadow-sm",
+          "inline-flex shrink-0 items-center justify-center rounded-lg p-1",
           markClassName,
         )}
       >
         <Image
           src="/BittsTechMark.png"
           alt="Bitts Tech logo mark"
-          fill
-          sizes="40px"
-          className="object-cover"
+          width={36}
+          height={36}
+          className="object-contain"
           priority={priority}
         />
       </span>

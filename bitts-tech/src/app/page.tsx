@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { SectionErrorBoundary } from "@/components/layout/SectionErrorBoundary";
 import { Hero } from "@/components/sections/Hero";
+import { ContactSection } from "@/components/sections/ContactSection";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { IndustriesSection } from "@/components/sections/IndustriesSection";
 import { ProblemSection } from "@/components/sections/ProblemSection";
@@ -31,6 +32,7 @@ export default function Home() {
         ["Process section", <ProcessSection key="process" />],
         ["Industries section", <IndustriesSection key="industries" />],
         ["FAQ section", <FaqSection key="faq" />],
+        ["Contact section", <ContactSection key="contact" />],
       ].map(([label, section]) => (
         <SectionErrorBoundary key={String(label)} label={String(label)}>
           {section}

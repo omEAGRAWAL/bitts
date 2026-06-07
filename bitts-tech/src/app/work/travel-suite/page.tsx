@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { CaseStudyLayout } from "@/components/work/CaseStudyLayout";
-import { caseStudies } from "@/lib/data/work";
+import { caseStudies, workProjects } from "@/lib/data/work";
 
 export const metadata: Metadata = {
   title: "Travel Agency Management Platform",
@@ -13,5 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default function TravelSuitePage() {
-  return <CaseStudyLayout caseStudy={caseStudies.travelSuite} />;
+  const tabs = workProjects.find((p) => p.href === "/work/travel-suite")?.tabs;
+  return <CaseStudyLayout caseStudy={caseStudies.travelSuite} tabs={tabs} />;
 }
