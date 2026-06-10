@@ -33,7 +33,7 @@ function SectionShell({
 }) {
   return (
     <section className={cn("py-12 md:py-20", className)}>
-      <div className="mx-auto w-full max-w-container px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8">
         {children}
       </div>
     </section>
@@ -182,7 +182,7 @@ function FeatureTabs({
               </span>
             </div>
             {/* Animated image */}
-            <div className="relative aspect-[16/10] w-full">
+            <div className="relative aspect-[16/10] w-full bg-white">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}
@@ -196,7 +196,7 @@ function FeatureTabs({
                     src={activeImage}
                     alt={`${activeFeature.name} screenshot`}
                     fill
-                    className="object-cover object-top"
+                    className="object-contain object-top"
                     sizes="(max-width: 1024px) 100vw, 60vw"
                     priority={active === 0}
                   />

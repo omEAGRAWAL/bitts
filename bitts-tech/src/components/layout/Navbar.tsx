@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Services", href: "/#services" },
   { label: "Our Work", href: "/#work" },
-  { label: "Why Us", href: "/#why-us" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -83,7 +82,7 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    const sectionIds = ["services", "work", "why-us"];
+    const sectionIds = ["services", "work"];
     const observer = new IntersectionObserver(
       (entries) => {
         const visibleEntry = entries.find((entry) => entry.isIntersecting);

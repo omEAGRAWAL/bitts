@@ -8,7 +8,6 @@ import { IndustriesSection } from "@/components/sections/IndustriesSection";
 import { ProblemSection } from "@/components/sections/ProblemSection";
 import { ProcessSection } from "@/components/sections/ProcessSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
-import { WhyUsSection } from "@/components/sections/WhyUsSection";
 import { WorkSection } from "@/components/sections/WorkSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqPageSchema } from "@/lib/schemas/faq";
@@ -28,7 +27,6 @@ export default function Home() {
         ["Problem section", <ProblemSection key="problem" />],
         ["Services section", <ServicesSection key="services" />],
         ["Work section", <WorkSection key="work" />],
-        ["Why us section", <WhyUsSection key="why-us" />],
         ["Process section", <ProcessSection key="process" />],
         ["Industries section", <IndustriesSection key="industries" />],
         ["FAQ section", <FaqSection key="faq" />],
