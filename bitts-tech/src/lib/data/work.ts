@@ -49,8 +49,6 @@ const travelFeatures = [
   "Lead capture and pipeline management",
   "Booking and itinerary management",
   "Invoice generation and payment tracking",
-  "Automated WhatsApp and email communication",
-  "Performance analytics and reporting",
 ];
 
 const constructionFeatures = [
@@ -68,7 +66,7 @@ export const workProjects: WorkProject[] = [
     challenge:
       "Travel agencies were managing leads, bookings, and follow-ups manually across disconnected tools.",
     features: travelFeatures,
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "WhatsApp API"],
+    stack: ["Next.js", "TypeScript", "PostgreSQL"],
     href: "/work/travel-suite",
     tabs: [
       { label: "Dashboard",       image: "/work/travel-1.webp" },
@@ -102,7 +100,7 @@ export const caseStudies = {
     platform: "Web App",
     title: "Travel Agency Management Platform",
     summary:
-      "A full-stack operating system for travel agencies handling leads, bookings, invoices, communication, and reporting in one place.",
+      "A full-stack operating system for travel agencies handling leads, bookings, and invoices in one place.",
     challengeIntro: [
       "Travel teams were trying to manage fast-moving customer conversations, bookings, invoices, and follow-ups across disconnected tools. That made it hard to know which leads were active, which trips needed attention, and which payments were still pending.",
       "The business needed one reliable platform that could reduce manual coordination, keep customer information organized, and give leadership visibility into day-to-day performance.",
@@ -112,10 +110,9 @@ export const caseStudies = {
       "Manual booking updates and itinerary tracking",
       "Invoices created separately from payment records",
       "Follow-ups dependent on memory and reminders",
-      "No central performance dashboard",
     ],
     solutionIntro:
-      "We built a centralized travel agency platform that connects lead management, booking workflows, invoicing, automation, and analytics into a single operational dashboard.",
+      "We built a centralized travel agency platform that connects lead management, booking workflows, and invoicing into a single operational system.",
     afterState: travelFeatures,
     features: [
       {
@@ -133,28 +130,17 @@ export const caseStudies = {
         description:
           "Generate polished invoices, connect them to bookings, and monitor payment status without jumping between tools.",
       },
-      {
-        name: "WhatsApp Automation",
-        description:
-          "Send automated confirmations, reminders, and follow-up messages through communication flows built around the agency process.",
-      },
-      {
-        name: "Analytics Dashboard",
-        description:
-          "See leads, bookings, payments, team activity, and performance trends in a real-time dashboard for better decisions.",
-      },
     ],
     techStack: [
       { name: "Next.js" },
       { name: "TypeScript" },
       { name: "PostgreSQL" },
-      { name: "WhatsApp API" },
       { name: "Cloud Hosting" },
     ],
     outcomes: [
       { value: "100%", label: "Centralized lead and booking workflow" },
       { value: "Multi-role", label: "Access for sales, operations, and admin" },
-      { value: "Real-time", label: "Dashboards for bookings and payments" },
+      { value: "Live", label: "Booking and payment visibility" },
     ],
   },
   constructionSuite: {
